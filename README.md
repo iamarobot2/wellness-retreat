@@ -8,7 +8,7 @@
 
     - Clone the repository:
       ```
-      git clone https://github.com/your-username/wellness-retreat.git
+      git clone https://github.com/iamarobot2/wellness-retreat.git
       ```
 
     - Navigate to the project directory:
@@ -21,9 +21,11 @@
       npm install
       ```
 
-    - Start the development server:
+    - Start the vite development server:
       ```
-      npm start
+      npm run dev
       ```
-
-    - Open your browser and visit `http://localhost:3000` to view the webpage.
+    This will start the development server and you can access the application at [http://localhost:5173]
+    
+    - Build the application for production:
+        npm run start
