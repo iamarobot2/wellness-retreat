@@ -22,6 +22,7 @@ export default function Filter({ filter, setFilter, search, setSearch })
         <option value="Yoga">Yoga</option>
         <option value="Meditation">Meditation</option>
         <option value="Detox">Detox</option>
+        <option value="Wellness">Wellness</option>
       </select>
       <input
         type="date"

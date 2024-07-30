@@ -3,77 +3,49 @@ import axios from "axios";
 import { Spinner } from "@material-tailwind/react";
 import Header from "./../components/Header";
 import Retreat from "./../components/Retreat";
-import Filter from "./../components/Filter";
+import Pagination from "./../components/Pagination";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Home() {
   const [loading, setloading] = useState(true);
   const [retreats, setRetreats] = useState([]);
-  const [filter, setFilter] = useState({ type: "", date: "" });
-  const [filteredRetreats, setFilteredRetreats] = useState([]);
-  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState(false);
+  const limit = 6;
   useEffect(() => {
     const fetchRetreats = async () => {
-      const { data } = await axios.get(
-        "https://669f704cb132e2c136fdd9a0.mockapi.io/api/v1/retreats",
-        {
-          params: {
-            search,
-            filter: filter.type,
-            date: filter.date,
-          },
-        }
-      );
-      setRetreats(data);
-      setloading(false);
-    };
-    fetchRetreats();
-  }, []);
-  useEffect(() => {
-    const applyFilters = () => {
-      let filtered = retreats;
-
-      if (filter.type) {
-        filtered = filtered.filter((retreat) =>
-          retreat.type.includes(filter.type)
+      try {
+        const { data } = await axios.get(
+          `https://669f704cb132e2c136fdd9a0.mockapi.io/api/v1/retreats?page=${page}&limit=${limit}`
         );
+        setRetreats(data);
+        setloading(false);
+        setError(false);
+      } catch (error) {
+        setError(true);
+        toast.error("Error fetching retreat data");
+        toast("Please Refresh the page.")
       }
-
-      if (filter.date) {
-        filtered = filtered.filter((retreat) => {
-          const retreatDate = new Date(retreat.date * 1000).toISOString();
-          return retreatDate.includes(filter.date);
-        });
-      }
-
-      if (search) {
-        filtered = filtered.filter((retreat) =>
-          retreat.title.toLowerCase().includes(search.toLowerCase())
-        );
-      }
-
-      setFilteredRetreats(filtered);
     };
-
-    applyFilters();
-  }, [filter, search, retreats]);
+    const debounceFetch = setTimeout(fetchRetreats, 300);
+    return () => clearTimeout(debounceFetch);
+  }, [page]);
   return (
     <>
-      <div className=" lg:px-16 px-8 py-2.5 flex flex-col justify-center items-center min-h-screen">
-        <Header />
+      <Header />
+      <div className="lg:px-16 px-8 py-2.5 flex flex-col items-center">
         {loading ? (
-          <Spinner className="h-8 w-8" />
-        ) : (
-          <div>
-            <Filter
-              filter={filter}
-              setFilter={setFilter}
-              search={search}
-              setSearch={setSearch}
-            />
-            <Retreat retreats={filteredRetreats} />
+          <div className="fixed inset-0 flex items-center justify-center">
+            <Spinner className="h-8 w-8" />
           </div>
+        ) : (
+          <>
+            <Pagination setPage={setPage} error={error} />
+            <Retreat retreats={retreats} />
+          </>
         )}
       </div>
+      <Toaster position="top-right" />
     </>
   );
 }

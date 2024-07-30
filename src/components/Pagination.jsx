@@ -1,54 +1,59 @@
 import React from "react";
 import { Button, IconButton } from "@material-tailwind/react";
 import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
- 
-export function CircularPagination() {
+
+export default function Pagination({ setPage, error }) {
   const [active, setActive] = React.useState(1);
- 
-  const getItemProps = (index) =>
-    ({
-      variant: active === index ? "filled" : "text",
-      color: "gray",
-      onClick: () => setActive(index),
-      className: "rounded-full",
-    });
- 
+
+  const getItemProps = (index) => ({
+    variant: active === index ? "filled" : "text",
+    color:"brown",
+    onClick: () => {
+      if (!error) {
+        setActive(index);
+        setPage(index);
+      }
+    },
+    className: "rounded-full",
+  });
+
   const next = () => {
-    if (active === 5) return;
- 
+    if (active === 4 || error) return;
+
     setActive(active + 1);
+    setPage(active + 1);
   };
- 
+
   const prev = () => {
-    if (active === 1) return;
- 
+    if (active === 1 || error) return;
+
     setActive(active - 1);
+    setPage(active - 1);
   };
- 
+
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center p-4">
       <Button
         variant="text"
         className="flex items-center gap-2 rounded-full"
         onClick={prev}
         disabled={active === 1}
       >
-        <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> Previous
+        <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> 
       </Button>
-      <div className="flex items-center gap-2">
-      {[1, 2, 3, 4, 5].map((index) => (
-        <IconButton key={index} {...getItemProps(index)}>
-          {index}
-        </IconButton>
-      ))}
+      <div className="flex items-center">
+        {[1, 2, 3, 4].map((index) => (
+          <IconButton key={index} {...getItemProps(index)}>
+            {index}
+          </IconButton>
+        ))}
       </div>
       <Button
         variant="text"
         className="flex items-center gap-2 rounded-full"
         onClick={next}
-        disabled={active === 5}
+        disabled={active === 4}
       >
-        Next
         <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
       </Button>
     </div>
